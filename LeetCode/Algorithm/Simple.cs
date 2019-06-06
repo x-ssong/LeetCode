@@ -330,5 +330,102 @@ namespace LeetCode.Algorithm
             return strRes;
         }
         #endregion
+
+        #region 20. 有效的括号
+        //给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。
+        //有效字符串需满足：
+        //左括号必须用相同类型的右括号闭合。
+        //左括号必须以正确的顺序闭合。
+        //注意空字符串可被认为是有效字符串。
+        /// <summary>
+        /// 思路一：空字符串为有效字符串，返回true
+        /// 字符去重回必须为偶数并且左括号与右括号数量一致，否则不符合条件符号必须成对出现
+        /// 再判断括号出现的顺序是否符合要求
+        /// 最后必须至少存在一个连续开闭的括号（耗时在108ms左右）
+        /// 思路二：使用堆栈（Stack）数据结构
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool IsValid(string s)
+        {
+            //List<char> symbolList = new List<char>() { '(', ')', '{', '}', '[', ']' };
+            List<string> symbolList_zh = new List<string>() { "()", "{}", "[]" };
+            //空字符串是有效的字符串，返回true
+            if (string.IsNullOrEmpty(s))
+            {
+                return true;
+            }
+            #region 用来判断是否包含除了'('，')'，'{'，'}'，'['，']'之外的其他字符（实际上不需要判断，因为题目上已经明确规定不包含其他的字符）
+            //存在不符合要求的字符时，返回false
+            //var list_bj = symbolList.Union(s.Distinct().ToList()).ToList();//算出并集
+            //var list_cj = list_bj.Except(symbolList).ToList();//并集与规定的集合之间的差集为空时，表示不存在其他字符
+            //if (list_cj != null && list_cj.Any())
+            //{
+            //    return false;
+            //} 
+            #endregion
+            //个数为1的字符串，不可能有对应的闭合符号，返回false
+            if (s.Length <= 1)
+            {
+                return false;
+            }
+            //去重后的字符串为奇数时，表示存在没有对应的闭合的符号，返回false
+            if (s.Distinct().Count() % 2 != 0)
+            {
+                return false;
+            }
+            //如果开始与闭合符号的个数对应不上时，返回false
+            foreach (var item in symbolList_zh)
+            {
+                if (s.Count(i => i == item[0]) != s.Count(i => i == item[1]))
+                {
+                    return false;
+                }
+            }
+            //判断开始符合与闭合符号顺序是否一致，不一致时,返回false
+            List<char> sym_char = new List<char>();
+            for (int i = 0; i < s.Length; i++)
+            {
+                var symbol_zh = symbolList_zh.Single(j => j.Contains(s[i]));
+                if (s[i] == symbol_zh[0])
+                {
+                    sym_char.Add(s[i]);
+                }
+                else
+                {
+                    if (i == 0)
+                    {
+                        return false;
+                    }
+                    else if (symbolList_zh.Single(j => j.Contains(sym_char.Last())) != symbol_zh)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        sym_char.RemoveAt(sym_char.LastIndexOf(sym_char.Last()));
+                    }
+                }
+            }
+            //判断是否存在完整的起始和闭合符号，存在时，返回true
+            for (int i = 0; i < s.Length - 1; i++)
+            {
+                var str_zh = s.Substring(i, 2);
+                if (symbolList_zh.Contains(str_zh))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        #endregion
+
+        #region 21. 合并两个有序链表（链表还没有学习，等学完链表后再完成该题）
+
+        #endregion
+
+        #region 26. 删除排序数组中的重复项
+
+        #endregion
     }
 }
